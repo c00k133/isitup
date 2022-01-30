@@ -3,20 +3,45 @@ version: "3.9"
 services:
   zookeeper:
     image: "zookeeper:3.7.0"
+    # Always restart, as per Zookeeper documentation
     restart: "always"
+    networks:
+      - "kafka-conn"
 
   kafka:
     image: "wurstmeister/kafka:2.13-2.8.1"
-    hostname: "localhost"
+    container_name: "kafka"
     ports:
       - "9092:9092"
+    depends_on:
+      - "zookeeper"
     environment:
-      KAFKA_ADVERTISED_HOST_NAME: "localhost"
+      KAFKA_ADVERTISED_HOST_NAME: "kafka"
+      KAFKA_BROKER_ID: "1"
+      KAFKA_ADVERTISED_PORT: "9092"
       KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
+      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka:9092"
+    networks:
+      - "kafka-conn"
 
   postgres:
     image: "postgres:14.1-alpine"
     environment:
       POSTGRES_PASSWORD: "changeme"
     ports:
+      # Default port by Postgres
       - "5432:5432"
+
+  isitup:
+    build:
+      dockerfile: "Dockerfile"
+      context: "."
+    restart: "always"
+    depends_on:
+      - "kafka"
+    networks:
+      - "kafka-conn"
+
+networks:
+  kafka-conn:
+    driver: bridge

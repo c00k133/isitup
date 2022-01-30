@@ -1,0 +1,8 @@
+# Producer configuration
+domains: "domains.csv"
+produce_period_seconds: 10
+
+# Kafka configuration
+topic: "PING"
+brokers:
+  - "kafka:9092"
