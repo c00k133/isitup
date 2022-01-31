@@ -21,10 +21,10 @@ class Config:
         self.table_name = config['table_name']
         self.polling_period_milliseconds = config['polling_period_milliseconds']
 
-        self.security_protocol = config['security_protocol'] or 'PLAINTEXT'
-        self.cert_file = config['cert_file'] or None
-        self.key_file = config['key_file'] or None
-        self.ca_file = config['ca_file'] or None
+        self.security_protocol = config.get('security_protocol', 'PLAINTEXT')
+        self.cert_file = config.get('cert_file', None)
+        self.key_file = config.get('key_file', None)
+        self.ca_file = config.get('ca_file', None)
 
     def _get_config_file_from_env(self):
         config_file = os.environ[Config.ENV_CONFIG]
