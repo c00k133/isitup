@@ -3,6 +3,7 @@ version: "3.9"
 services:
   zookeeper:
     image: "zookeeper:3.7.0"
+    container_name: "zookeeper"
     # Always restart, as per Zookeeper documentation
     restart: "always"
     networks:
@@ -26,22 +27,41 @@ services:
 
   postgres:
     image: "postgres:14.1-alpine"
+    container_name: "postgres"
     environment:
       POSTGRES_PASSWORD: "changeme"
     ports:
       # Default port by Postgres
       - "5432:5432"
+    networks:
+      - "db-conn"
 
-  isitup:
+  isitup-producer:
     build:
-      dockerfile: "Dockerfile"
+      dockerfile: "Dockerfile.producer"
       context: "."
+    container_name: "isitup-producer"
     restart: "always"
     depends_on:
       - "kafka"
     networks:
       - "kafka-conn"
 
+  isitup-consumer:
+    build:
+      dockerfile: "Dockerfile.consumer"
+      context: "."
+    container_name: "isitup-consumer"
+    restart: "always"
+    depends_on:
+      - "kafka"
+      - "postgres"
+    networks:
+      - "kafka-conn"
+      - "db-conn"
+
 networks:
   kafka-conn:
+    driver: bridge
+  db-conn:
     driver: bridge
