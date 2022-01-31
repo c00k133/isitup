@@ -9,8 +9,6 @@ from kafka import KafkaProducer
 
 from config import Config
 
-IS_RUNNING = True
-
 _logger = logging.getLogger(__name__)
 _config = Config()
 
@@ -71,14 +69,13 @@ def producer():
         value_serializer=_value_serializer,
     )
 
-    with ThreadPoolExecutor() as executor:
-        while IS_RUNNING:
-            _logger.info('Ping round started')
-            _produce(executor, kafka_producer)
+    with contextlib.closing(kafka_producer):
+        with ThreadPoolExecutor() as executor:
+            while True:
+                _logger.info('Ping round started')
+                _produce(executor, kafka_producer)
 
-            time.sleep(_config.produce_period_seconds)
-
-    kafka_producer.close()
+                time.sleep(_config.produce_period_seconds)
 
 
 if __name__ == '__main__':
