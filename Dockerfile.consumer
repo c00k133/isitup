@@ -1,5 +1,4 @@
 FROM python:3.9.10-slim
-#RUN apt-get --yes update && apt-get install --yes libpq-dev gcc
 WORKDIR /src
 COPY . .
 RUN pip install --requirement requirements.txt
