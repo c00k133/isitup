@@ -6,3 +6,8 @@ produce_period_seconds: 10
 topic: "PING"
 brokers:
   - "kafka:9092"
+
+# Postgres configuration
+database_uri: "postgres://postgres:changeme@postgres:5432"
+table_name: "pings"
+polling_period_milliseconds: 10000
