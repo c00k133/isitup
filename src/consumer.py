@@ -16,12 +16,14 @@ def _create_db_table(conn):
     table_name = _config.table_name
     with conn.cursor() as cursor:
         _logger.info('Creating table', extra={'table_name': table_name})
-        cursor.execute(f'''
-            CREATE TABLE IF NOT EXISTS {table_name} (
-                url VARCHAR NOT NULL,
-                status_code INT NOT NULL
-            );
-        ''')
+        cursor.execute(
+            f'''
+                CREATE TABLE IF NOT EXISTS {table_name} (
+                    url VARCHAR NOT NULL,
+                    status_code INT NOT NULL
+                );
+            '''
+        )
 
         conn.commit()
 
@@ -38,7 +40,11 @@ def _store_pings(conn, pings):
 
     with conn.cursor() as cursor:
         _logger.info('Storing %d pings', len(pings))
-        psycopg2.extras.execute_values(cursor, sql_statement, pings)
+        psycopg2.extras.execute_values(
+            cursor,
+            sql_statement,
+            pings
+        )
         conn.commit()
 
 
