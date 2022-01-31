@@ -1,8 +1,14 @@
+import os
 import yaml
 
 
 class Config:
-    def __init__(self, config_file='config.local.yml'):
+    ENV_CONFIG = 'ISITUP_CONFIG_FILE'
+
+    def __init__(self, config_file=None):
+        if not config_file:
+            config_file = self._get_config_file_from_env()
+
         with open(config_file) as fp:
             config = yaml.safe_load(fp)
 
@@ -14,6 +20,15 @@ class Config:
         self.database_uri = config['database_uri']
         self.table_name = config['table_name']
         self.polling_period_milliseconds = config['polling_period_milliseconds']
+
+        self.security_protocol = config['security_protocol'] or 'PLAINTEXT'
+        self.cert_file = config['cert_file'] or None
+        self.key_file = config['key_file'] or None
+        self.ca_file = config['ca_file'] or None
+
+    def _get_config_file_from_env(self):
+        config_file = os.environ[Config.ENV_CONFIG]
+        return config_file
 
     def _parse_domains_file(self, domains_file):
         with open(domains_file) as fp:
@@ -27,5 +42,4 @@ class Config:
             return self._parse_domains_file(domains)
         elif type(domains) is list:
             return domains
-        # TODO: fail gracefully or report to user
         return []

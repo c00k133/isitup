@@ -67,6 +67,10 @@ def producer():
     kafka_producer = KafkaProducer(
         bootstrap_servers=_config.brokers,
         value_serializer=_value_serializer,
+        security_protocol=_config.security_protocol,
+        ssl_certfile=_config.cert_file,
+        ssl_keyfile=_config.key_file,
+        ssl_cafile=_config.ca_file,
     )
 
     with contextlib.closing(kafka_producer):

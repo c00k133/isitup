@@ -58,9 +58,8 @@ def _value_deserializer(value):
 def consume():
     _logger.info('Consumer started')
 
-    database_uri = _config.database_uri
-    _logger.info('Connecting to database: %s', database_uri)
-    with contextlib.closing(psycopg2.connect(database_uri)) as conn:
+    _logger.info('Connecting to database')
+    with contextlib.closing(psycopg2.connect(_config.database_uri)) as conn:
         _create_db_table(conn)
 
         _logger.info('Connect to Kafka on topic %s', _config.topic)
@@ -68,6 +67,10 @@ def consume():
             _config.topic,
             bootstrap_servers=_config.brokers,
             value_deserializer=_value_deserializer,
+            security_protocol=_config.security_protocol,
+            ssl_certfile=_config.cert_file,
+            ssl_keyfile=_config.key_file,
+            ssl_cafile=_config.ca_file,
         )
         with contextlib.closing(kafka_consumer):
             while True:

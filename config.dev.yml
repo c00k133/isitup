@@ -11,3 +11,9 @@ brokers:
 database_uri: "postgres://postgres:changeme@postgres:5432"
 table_name: "pings"
 polling_period_milliseconds: 10000
+
+# Certificates and keys
+security_protocol:
+cert_file:
+key_file:
+ca_file:

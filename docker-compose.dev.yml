@@ -31,28 +31,29 @@ services:
     environment:
       POSTGRES_PASSWORD: "changeme"
     ports:
-      # Default port by Postgres
       - "5432:5432"
     networks:
       - "db-conn"
 
-  isitup-producer:
+  isitup-producer-dev:
     build:
       dockerfile: "Dockerfile.producer"
       context: "."
-    container_name: "isitup-producer"
     restart: "always"
+    environment:
+      ISITUP_CONFIG_FILE: "config.dev.yml"
     depends_on:
       - "kafka"
     networks:
       - "kafka-conn"
 
-  isitup-consumer:
+  isitup-consumer-dev:
     build:
       dockerfile: "Dockerfile.consumer"
       context: "."
-    container_name: "isitup-consumer"
     restart: "always"
+    environment:
+      ISITUP_CONFIG_FILE: "config.dev.yml"
     depends_on:
       - "kafka"
       - "postgres"
